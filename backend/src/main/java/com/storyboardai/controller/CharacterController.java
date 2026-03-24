@@ -85,10 +85,18 @@ public class CharacterController {
                 default -> "png";
             };
             String filename = id + "_" + UUID.randomUUID().toString().substring(0, 8) + "." + ext;
-            Path staticPath = Paths.get("src/main/resources/static/images");
-            Files.createDirectories(staticPath);
-            Path filePath = staticPath.resolve(filename);
-            try (OutputStream os = Files.newOutputStream(filePath)) {
+            // Write to target (runtime) for serving immediately
+            Path targetPath = Paths.get("target/classes/static/images");
+            Files.createDirectories(targetPath);
+            Path targetFile = targetPath.resolve(filename);
+            try (OutputStream os = Files.newOutputStream(targetFile)) {
+                os.write(file.getBytes());
+            }
+            // Also write to src for persistence across restarts
+            Path srcPath = Paths.get("src/main/resources/static/images");
+            Files.createDirectories(srcPath);
+            Path srcFile = srcPath.resolve(filename);
+            try (OutputStream os = Files.newOutputStream(srcFile)) {
                 os.write(file.getBytes());
             }
             String imageUrl = "/images/" + filename;

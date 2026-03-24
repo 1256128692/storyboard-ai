@@ -1,4 +1,5 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
+export const IMG_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8080'
 
 export const api = {
   // News
@@ -19,4 +20,11 @@ export const api = {
   getCharacters: () => fetch(`${API_BASE}/characters`).then(r => r.json()),
   updateCharacter: (id: number, data: any) => fetch(`${API_BASE}/characters/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).then(r => r.json()),
   generateCharacterImage: (id: number) => fetch(`${API_BASE}/characters/${id}/generate-image`, { method: 'POST' }).then(r => r.json()),
+}
+
+// Resolve image URL: relative paths get IMG_BASE prepended
+export function resolveImageUrl(url: string | null): string {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `${IMG_BASE}${url}`
 }

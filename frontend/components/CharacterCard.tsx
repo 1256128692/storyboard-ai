@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { resolveImageUrl, API_BASE } from "@/lib/api";
 
 interface CharacterCardProps {
   character: any;
@@ -10,14 +11,6 @@ const characterEmoji: Record<string, string> = {
   PANDA: "🐼",
   POLAR_BEAR: "🐻‍❄️",
 };
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
-function getImageUrl(url: string | null): string {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  return `${API_BASE}${url}`;
-}
 
 export default function CharacterCard({ character, onUpdate, onRegenerate }: CharacterCardProps) {
   const [editing, setEditing] = useState(false);
@@ -57,7 +50,7 @@ export default function CharacterCard({ character, onUpdate, onRegenerate }: Cha
         <div className="relative shrink-0">
           {character.referenceImageUrl ? (
             <img
-              src={getImageUrl(character.referenceImageUrl)}
+              src={resolveImageUrl(character.referenceImageUrl)}
               alt={character.name}
               className="w-28 h-28 rounded-xl object-cover bg-gray-100"
             />
