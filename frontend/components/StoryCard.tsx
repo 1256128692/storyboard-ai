@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface StoryCardProps {
   story: any;
   expanded: boolean;
@@ -7,10 +9,23 @@ interface StoryCardProps {
   onArchive: () => void;
 }
 
+const statusLabels: Record<string, string> = {
+  DRAFT: "待审核",
+  APPROVED: "已通过",
+  ARCHIVED: "已归档",
+};
+
 const statusColors: Record<string, string> = {
   DRAFT: "bg-yellow-100 text-yellow-700",
   APPROVED: "bg-green-100 text-green-700",
   ARCHIVED: "bg-gray-100 text-gray-500",
+};
+
+const toneLabels: Record<string, string> = {
+  ABSURD: "荒诞",
+  IRONIC: "反讽",
+  DEADPAN: "冷幽默",
+  SARCASTIC: "讽刺",
 };
 
 export default function StoryCard({ story, expanded, alternate, onToggle, onApprove, onArchive }: StoryCardProps) {
@@ -25,22 +40,29 @@ export default function StoryCard({ story, expanded, alternate, onToggle, onAppr
         <div className="flex items-center gap-4">
           <span className="font-medium text-gray-800">{story.title}</span>
           <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[story.status] || "bg-gray-100 text-gray-500"}`}>
-            {story.status}
+            {statusLabels[story.status] || story.status}
           </span>
+          {story.tone && (
+            <span className="text-xs text-gray-400">
+              {toneLabels[story.tone] || story.tone}
+            </span>
+          )}
         </div>
         <span className="text-gray-400">{expanded ? "▲" : "▼"}</span>
       </div>
 
       {expanded && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-          <p className="text-gray-600 text-sm">{story.description}</p>
+          <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-800">
+            💡 <strong>故事梗概：</strong>{story.summary || story.description}
+          </div>
           <div className="flex gap-3">
             {story.status === "DRAFT" && (
               <button
                 onClick={(e) => { e.stopPropagation(); onApprove(); }}
                 className="bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-green-700 transition"
               >
-                Approve
+                ✅ 通过审核
               </button>
             )}
             {story.status !== "ARCHIVED" && (
@@ -48,9 +70,16 @@ export default function StoryCard({ story, expanded, alternate, onToggle, onAppr
                 onClick={(e) => { e.stopPropagation(); onArchive(); }}
                 className="border border-gray-300 text-gray-600 text-sm px-4 py-1.5 rounded-lg hover:bg-gray-100 transition"
               >
-                Archive
+                📁 归档
               </button>
             )}
+            <Link
+              href={`/storyboards/${story.id}`}
+              className="border border-blue-300 text-blue-600 text-sm px-4 py-1.5 rounded-lg hover:bg-blue-50 transition"
+              onClick={(e) => e.stopPropagation()}
+            >
+              🎬 查看分镜 →
+            </Link>
           </div>
         </div>
       )}

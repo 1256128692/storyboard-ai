@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/news")
@@ -19,6 +18,12 @@ public class NewsController {
     @GetMapping
     public ResponseEntity<List<NewsItem>> getAllNews() {
         return ResponseEntity.ok(newsService.findAll());
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<List<NewsItem>> getLatestNews() {
+        newsService.seedSampleNews();
+        return ResponseEntity.ok(newsService.findLatest(5));
     }
 
     @GetMapping("/{id}")

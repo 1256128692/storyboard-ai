@@ -15,13 +15,13 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         seedCharacter("PANDA",
-                "A lovable but slightly dim-witted panda who stumbles through life with genuine enthusiasm. Prone to long pauses and obvious observations.",
-                "A round, fluffy giant panda with distinctive black eye patches, sitting awkwardly while eating bamboo, simple white background, cartoon style",
+                "话痨热情，偶尔犯傻，喜欢长篇大论解释显而易见的事情，乐观积极",
+                "写实风格大熊猫，直立行走，贝雷帽，黑色外套，正常的熊猫人体态",
                 null);
 
         seedCharacter("POLAR_BEAR",
-                "A deadpan, world-weary polar bear who delivers dry commentary on the absurdity of existence. Sarcastic but secretly caring.",
-                "An elegant white polar bear standing upright like a person, wearing a tiny scarf, looking mildly unimpressed, simple white background, cartoon style",
+                "高冷毒舌，短句回应，冷幽默，内心温暖，理性吐槽",
+                "写实风格北极熊，直立行走，橘黄色紧身开衫（囚服风格），正常的北极熊人体态",
                 null);
     }
 
