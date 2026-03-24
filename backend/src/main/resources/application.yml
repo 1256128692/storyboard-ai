@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:storyboard_ai;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+server:
+  port: 8080
+
+minimax:
+  api-key: sk-cp-vTt78TW5iKACIH7CVU6Bt6vc84bpMqbTxBIdtnaQSCgjO7KE0IcWyTzYd-3unYOftk5IgpV4vQPmJjZjB3E_p3NBGmoZZxiZynBAwE_wMAFN2d2ob18aXxc
+  image-model: image-01
+  image-base-url: https://api.minimax.chat/v1/image_generation
+
+---
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/storyboard_ai?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  h2:
+    console:
+      enabled: false

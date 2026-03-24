@@ -1,0 +1,39 @@
+{
+  "name": "storyboard-ai",
+  "version": "1.0.0",
+  "compose": {
+    "services": {
+      "frontend": {
+        "build": {
+          "context": "./frontend",
+          "dockerfile": "Dockerfile"
+        },
+        "ports": ["3000:3000"],
+        "volumes": ["./frontend:/app"],
+        "command": "npm run dev"
+      },
+      "backend": {
+        "build": {
+          "context": "./backend",
+          "dockerfile": "Dockerfile"
+        },
+        "ports": ["8080:8080"],
+        "volumes": ["./backend:/app"],
+        "command": "sleep 15 && mvn spring-boot:run",
+        "depends_on": ["mysql"]
+      },
+      "mysql": {
+        "image": "mysql:8.0",
+        "environment": {
+          "MYSQL_ROOT_PASSWORD": "root",
+          "MYSQL_DATABASE": "storyboard_ai"
+        },
+        "ports": ["3306:3306"],
+        "volumes": ["mysql_data:/var/lib/mysql"]
+      }
+    },
+    "volumes": {
+      "mysql_data": null
+    }
+  }
+}
