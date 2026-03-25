@@ -33,6 +33,10 @@ minimax:
   image-model: image-01
   image-base-url: https://api.minimax.chat/v1/image_generation
 
+tavily:
+  api-key: tvly-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  base-url: https://api.tavily.com
+
 ---
 spring:
   config:
