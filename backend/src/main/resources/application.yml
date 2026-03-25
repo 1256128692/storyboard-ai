@@ -34,7 +34,7 @@ minimax:
   image-base-url: https://api.minimax.chat/v1/image_generation
 
 tavily:
-  api-key: tvly-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  api-key: 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
   base-url: https://api.tavily.com
 
 ---
