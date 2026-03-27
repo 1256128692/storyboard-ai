@@ -14,6 +14,7 @@ import java.util.Optional;
 public class CharacterService {
 
     private final CharacterRepository characterRepository;
+    private final MiniMaxService miniMaxService;
 
     public List<Character> findAll() {
         return characterRepository.findAll();
@@ -35,5 +36,20 @@ public class CharacterService {
     @Transactional
     public void deleteById(Long id) {
         characterRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Character generateImage(Long id) {
+        Optional<Character> optionalCharacter = characterRepository.findById(id);
+        if (optionalCharacter.isEmpty()) {
+            throw new IllegalArgumentException("Character not found");
+        }
+        Character character = optionalCharacter.get();
+        String imageUrl = miniMaxService.generateImage(character.getVisualDescription());
+        if (imageUrl != null) {
+            character.setReferenceImageUrl(imageUrl);
+            return characterRepository.save(character);
+        }
+        return character;
     }
 }

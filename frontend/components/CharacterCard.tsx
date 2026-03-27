@@ -5,6 +5,7 @@ interface CharacterCardProps {
   character: any;
   onUpdate: (id: number, data: any) => void;
   onRegenerate: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
 const characterEmoji: Record<string, string> = {
@@ -12,10 +13,11 @@ const characterEmoji: Record<string, string> = {
   POLAR_BEAR: "🐻‍❄️",
 };
 
-export default function CharacterCard({ character, onUpdate, onRegenerate }: CharacterCardProps) {
+export default function CharacterCard({ character, onUpdate, onRegenerate, onDelete }: CharacterCardProps) {
   const [editing, setEditing] = useState(false);
   const [visualDescription, setVisualDescription] = useState(character.visualDescription ?? "");
   const [uploading, setUploading] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
@@ -30,7 +32,7 @@ export default function CharacterCard({ character, onUpdate, onRegenerate }: Cha
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`${API_BASE}/api/characters/${character.id}/image`, {
+      const res = await fetch(`${API_BASE}/characters/${character.id}/image`, {
         method: "POST",
         body: formData,
       });
@@ -114,16 +116,32 @@ export default function CharacterCard({ character, onUpdate, onRegenerate }: Cha
                   ✏️ 编辑描述
                 </button>
                 <button
-                  onClick={() => onRegenerate(character.id)}
-                  className="bg-purple-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-purple-700 transition"
+                  onClick={async () => {
+                    setRegenerating(true);
+                    try {
+                      await onRegenerate(character.id);
+                    } catch (error) {
+                      console.error('Error regenerating character image:', error);
+                    } finally {
+                      setRegenerating(false);
+                    }
+                  }}
+                  disabled={regenerating}
+                  className="bg-purple-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
                 >
-                  🔄 AI生成图片
+                  {regenerating ? "生成中..." : "🔄 AI生成图片"}
                 </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-green-700 transition"
                 >
                   📤 上传图片
+                </button>
+                <button
+                  onClick={() => onDelete(character.id)}
+                  className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-red-700 transition"
+                >
+                  🗑️ 删除角色
                 </button>
               </>
             )}

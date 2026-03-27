@@ -26,10 +26,10 @@ export default function StoriesPage() {
     setMessage({ type: "info", text: "🤖 正在根据今日热点生成故事，请稍等..." });
     try {
       const result = await api.generateStories();
-      if (result && result.length > 0) {
+      if (result && result.stories && result.stories.length > 0) {
         const updated = await api.getStories();
         setStories(updated);
-        showMsg("success", `✅ 生成成功！生成了 ${result.length} 个故事，快去看看吧！`);
+        showMsg("success", `✅ 生成成功！生成了 ${result.stories.length} 个故事，快去看看吧！`);
       } else {
         showMsg("error", "⚠️ 生成未返回结果，请检查后端日志");
       }
@@ -60,6 +60,19 @@ export default function StoriesPage() {
       showMsg("info", "📁 故事已归档");
     } catch (e) {
       showMsg("error", "❌ 操作失败");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm("确定要删除这个故事吗？此操作不可恢复。")) {
+      try {
+        await api.deleteStory(id);
+        // 直接从本地状态中移除故事，不需要重新获取所有故事
+        setStories(prevStories => prevStories.filter(story => story.id !== id));
+        showMsg("success", "🗑️ 故事已删除");
+      } catch (e) {
+        showMsg("error", "❌ 删除失败");
+      }
     }
   };
 
@@ -122,6 +135,7 @@ export default function StoriesPage() {
             onToggle={() => setExpandedId(expandedId === story.id ? null : story.id)}
             onApprove={() => handleApprove(story.id)}
             onArchive={() => handleArchive(story.id)}
+            onDelete={() => handleDelete(story.id)}
           />
         ))}
         {stories.length === 0 && !generating && (

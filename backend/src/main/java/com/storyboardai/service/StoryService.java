@@ -105,12 +105,12 @@ public class StoryService {
                 // 解析AI生成的故事
                 Story story = parseAiGeneratedStory(aiResponse, news);
                 if (story != null) {
-                    stories.add(story);
+                    stories.add(storyRepository.save(story));
                 }
             } else {
                 // 如果AI生成失败，使用备用方案
                 Story fallbackStory = createFallbackStory(news, i);
-                stories.add(fallbackStory);
+                stories.add(storyRepository.save(fallbackStory));
             }
         }
         return stories;
@@ -133,6 +133,8 @@ public class StoryService {
             3. 熊猫和北极熊的角色要鲜明，一个认真一个吐槽
             4. 故事结构：开场（抓住注意力）+ 发展（层层递进）+ 高潮（反转/爆点）+ 结尾（升华或神转折）
             5. 要有金句/梗，让人看完想转发
+            6. 故事内容长度控制在200字以内，简洁有力
+            7. 包含隐喻，让故事更有深度
 
             请用以下格式输出：
             【故事】
@@ -247,18 +249,24 @@ public class StoryService {
     }
 
     /**
-     * 保留旧方法但更新内容
+     * 保留旧方法但更新内容 - 使用新闻ID和随机数增加多样性
      */
     @Transactional
     public List<Story> generateStoriesFromNews(List<NewsItem> newsList) {
         List<Story> stories = new ArrayList<>();
-        String[] tones = {"IRONIC", "ABSURD", "DEADPAN", "SARCASTIC"};
+        
+        // 随机选择3条不同的新闻
+        List<NewsItem> shuffled = new ArrayList<>(newsList);
+        java.util.Collections.shuffle(shuffled);
+        int count = Math.min(3, shuffled.size());
 
-        for (int i = 0; i < Math.min(3, newsList.size()); i++) {
-            NewsItem news = newsList.get(i % newsList.size());
-            String title = generateStoryTitle(news.getTitle(), i);
-            String summary = generateStorySummary(news.getTitle(), news.getContent(), i);
-            String tone = tones[i % tones.length];
+        for (int i = 0; i < count; i++) {
+            NewsItem news = shuffled.get(i);
+            // 使用新闻ID和随机数生成更多变化
+            int seed = (int)(news.getId() != null ? news.getId() : i + 1);
+            String title = generateStoryTitle(news.getTitle(), seed);
+            String summary = generateStorySummary(news.getTitle(), news.getContent(), seed);
+            String tone = new String[]{"IRONIC", "ABSURD", "DEADPAN", "SARCASTIC"}[seed % 4];
 
             Story story = Story.builder()
                     .title(title)
@@ -266,6 +274,7 @@ public class StoryService {
                     .tone(tone)
                     .durationHint("1-3分钟")
                     .status("DRAFT")
+                    .sourceNewsId(news.getId())
                     .build();
             stories.add(storyRepository.save(story));
         }

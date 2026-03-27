@@ -7,6 +7,11 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   datasource:
     url: jdbc:h2:file:./data/storyboard_ai;MODE=MySQL;DATABASE_TO_LOWER=TRUE
     username: sa
@@ -26,12 +31,12 @@ spring:
         format_sql: true
 
 server:
-  port: 8080
+  port: 8081
 
 minimax:
   api-key: sk-cp-vTt78TW5iKACIH7CVU6Bt6vc84bpMqbTxBIdtnaQSCgjO7KE0IcWyTzYd-3unYOftk5IgpV4vQPmJjZjB3E_p3NBGmoZZxiZynBAwE_wMAFN2d2ob18aXxc
   image-model: image-01
-  image-base-url: https://api.minimax.chat/v1/image_generation
+  image-base-url: https://api.minimaxi.com/v1/image_generation
 
 tavily:
   api-key: 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

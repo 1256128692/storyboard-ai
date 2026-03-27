@@ -12,9 +12,17 @@ export default function CharactersPage() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
+    console.log('Fetching characters...');
     api.getCharacters()
-      .then((data) => { setCharacters(data); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then((data) => {
+        console.log('Characters data:', data);
+        setCharacters(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching characters:', error);
+        setLoading(false);
+      });
   }, []);
 
   const handleUpdate = async (id: number, data: any) => {
@@ -23,8 +31,13 @@ export default function CharactersPage() {
   };
 
   const handleRegenerate = async (id: number) => {
-    const updated = await api.generateCharacterImage(id);
-    setCharacters((prev) => prev.map((c) => (c.id === id ? { ...c, ...updated } : c)));
+    try {
+      const updated = await api.generateCharacterImage(id);
+      setCharacters((prev) => prev.map((c) => (c.id === id ? { ...c, ...updated } : c)));
+    } catch (error) {
+      console.error('Error generating character image:', error);
+      alert('生成图片失败，请稍后重试');
+    }
   };
 
   const handleCreate = async () => {
@@ -37,6 +50,17 @@ export default function CharactersPage() {
       setShowModal(false);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('确定要删除这个角色吗？')) {
+      try {
+        await api.deleteCharacter(id);
+        setCharacters((prev) => prev.filter((c) => c.id !== id));
+      } catch (error) {
+        console.error('Error deleting character:', error);
+      }
     }
   };
 
@@ -76,6 +100,7 @@ export default function CharactersPage() {
             character={char}
             onUpdate={handleUpdate}
             onRegenerate={handleRegenerate}
+            onDelete={handleDelete}
           />
         ))}
       </div>

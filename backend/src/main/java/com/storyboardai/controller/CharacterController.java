@@ -107,4 +107,16 @@ public class CharacterController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("/{id}/generate-image")
+    public ResponseEntity<Character> generateImage(@PathVariable Long id) {
+        try {
+            Character character = characterService.generateImage(id);
+            return ResponseEntity.ok(character);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

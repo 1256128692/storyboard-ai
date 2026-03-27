@@ -1,5 +1,5 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
-export const IMG_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8080'
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081/api'
+export const IMG_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8081'
 
 export const api = {
   // News
@@ -8,9 +8,10 @@ export const api = {
 
   // Stories
   getStories: () => fetch(`${API_BASE}/stories`).then(r => r.json()),
-  generateStories: () => fetch(`${API_BASE}/stories/generate`, { method: 'POST' }).then(r => r.json()),
+  generateStories: () => fetch(`${API_BASE}/stories/generate-from-hot-news`, { method: 'POST' }).then(r => r.json()),
   getStory: (id: number) => fetch(`${API_BASE}/stories/${id}`).then(r => r.json()),
   updateStory: (id: number, data: any) => fetch(`${API_BASE}/stories/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).then(r => r.json()),
+  deleteStory: (id: number) => fetch(`${API_BASE}/stories/${id}`, { method: 'DELETE' }).then(r => r.ok ? {} : r.json()),
 
   // Scenes
   getScenes: (storyId: number) => fetch(`${API_BASE}/stories/${storyId}/scenes`).then(r => r.json()),
@@ -18,7 +19,9 @@ export const api = {
 
   // Characters
   getCharacters: () => fetch(`${API_BASE}/characters`).then(r => r.json()),
+  createCharacter: (data: any) => fetch(`${API_BASE}/characters`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).then(r => r.json()),
   updateCharacter: (id: number, data: any) => fetch(`${API_BASE}/characters/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }).then(r => r.json()),
+  deleteCharacter: (id: number) => fetch(`${API_BASE}/characters/${id}`, { method: 'DELETE' }).then(() => true),
   generateCharacterImage: (id: number) => fetch(`${API_BASE}/characters/${id}/generate-image`, { method: 'POST' }).then(r => r.json()),
 }
 

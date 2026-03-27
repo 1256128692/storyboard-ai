@@ -7,6 +7,7 @@ interface StoryCardProps {
   onToggle: () => void;
   onApprove: () => void;
   onArchive: () => void;
+  onDelete: () => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -28,7 +29,7 @@ const toneLabels: Record<string, string> = {
   SARCASTIC: "讽刺",
 };
 
-export default function StoryCard({ story, expanded, alternate, onToggle, onApprove, onArchive }: StoryCardProps) {
+export default function StoryCard({ story, expanded, alternate, onToggle, onApprove, onArchive, onDelete }: StoryCardProps) {
   return (
     <div
       className={`rounded-xl border transition cursor-pointer ${
@@ -73,6 +74,12 @@ export default function StoryCard({ story, expanded, alternate, onToggle, onAppr
                 📁 归档
               </button>
             )}
+            <button
+              onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              className="border border-red-300 text-red-600 text-sm px-4 py-1.5 rounded-lg hover:bg-red-50 transition"
+            >
+              🗑️ 删除
+            </button>
             <Link
               href={`/storyboards/${story.id}`}
               className="border border-blue-300 text-blue-600 text-sm px-4 py-1.5 rounded-lg hover:bg-blue-50 transition"

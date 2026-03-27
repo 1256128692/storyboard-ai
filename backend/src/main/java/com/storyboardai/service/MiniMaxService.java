@@ -26,27 +26,36 @@ public class MiniMaxService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String generateImage(String prompt) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + apiKey);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("model", imageModel);
-        body.put("prompt", prompt);
+            Map<String, Object> body = new HashMap<>();
+            body.put("model", imageModel);
+            body.put("prompt", prompt);
+            body.put("response_format", "url");
+            body.put("n", 1);
+            body.put("prompt_optimizer", true);
+            body.put("aspect_ratio", "9:16");
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(imageBaseUrl, entity, Map.class);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity(imageBaseUrl, entity, Map.class);
 
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            Map<String, Object> responseBody = response.getBody();
-            Object dataObj = responseBody.get("data");
-            if (dataObj instanceof Map) {
-                Map<String, Object> data = (Map<String, Object>) dataObj;
-                Object urls = data.get("image_urls");
-                if (urls instanceof List && !((List<?>) urls).isEmpty()) {
-                    return (String) ((List<?>) urls).get(0);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                Map<String, Object> responseBody = response.getBody();
+                Object dataObj = responseBody.get("data");
+                if (dataObj instanceof Map) {
+                    Map<String, Object> data = (Map<String, Object>) dataObj;
+                    Object urls = data.get("image_urls");
+                    if (urls instanceof List && !((List<?>) urls).isEmpty()) {
+                        return (String) ((List<?>) urls).get(0);
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Error generating image: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }

@@ -77,7 +77,7 @@ public class StoryController {
             String topic = request != null && request.containsKey("topic")
                     ? (String) request.get("topic") : null;
             int maxResults = request != null && request.containsKey("maxResults")
-                    ? (Integer) request.get("maxResults") : 5;
+                    ? (Integer) request.get("maxResults") : 3;
 
             List<HotNewsService.HotNewsResult> hotNews;
             if (topic != null && !topic.isBlank()) {
